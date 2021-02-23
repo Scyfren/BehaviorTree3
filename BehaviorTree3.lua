@@ -567,9 +567,13 @@ function TreeProto:run(obj,...)
 				node.start(obj,...)
 			end
 
-			local status = node.run(obj,...)
-			if status == nil then
-				warn("node.run did not call success, running or fail, acting as fail")
+			local success, status = pcall(node.run, obj,...)
+			if status == nil or success == false then
+				if success then
+					warn("node.run did not call success, running or fail, acting as fail")
+				else
+					warn("node.run threw an error, acting as fail")
+				end
 				status = FAIL
 			end
 
